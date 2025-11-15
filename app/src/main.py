@@ -1,10 +1,11 @@
 from typing import Union, List
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Depends, BackgroundTasks
-
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import uuid
 from uuid import UUID
 import os
+
 
 from app.src.video_processor import VideoProcessor
 from . import crud, models, schemas 
@@ -17,6 +18,14 @@ from .database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Pothole Detection API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 model_collection = {
     "pothole_detection" : "pothole-detection-i00zy/2",
@@ -41,7 +50,7 @@ def api_create_pothole(pothole: schemas.PotholeCreate, db: Session = Depends(get
 # Endpoint za citanje svih rupa
 @app.get("/potholes/", response_model=List[schemas.Pothole])
 def api_get_potholes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    potholes = crud.get_potholes(db, skip=skip, limit=limit)
+    potholes = crud.get_potholes(db)
     return potholes
 
 @app.get("/")

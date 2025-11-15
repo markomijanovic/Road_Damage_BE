@@ -65,6 +65,7 @@ class VideoProcessor():
 
         framerate = cap.get(cv2.CAP_PROP_FPS)
         update_pos_step = int(framerate/30)
+       
         if update_pos_step == 0:
             update_pos_step = 1
 
