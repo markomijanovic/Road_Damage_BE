@@ -30,7 +30,8 @@ app.add_middleware(
 model_collection = {
     "pothole_detection" : "pothole-detection-i00zy/2",
     "road_damage_detection" : "road-damages-detection-mi2na/1",
-    "road_damage" : "road-damage-ww8ex/1"
+    "road_damage" : "road-damage-ww8ex/1",
+    "custom": "hakaton-dataset-f8j4s/1"
 }
 
 def get_db():

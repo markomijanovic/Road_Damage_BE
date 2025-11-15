@@ -32,9 +32,10 @@ class VideoProcessor():
         for i in range(len(tracked)):
             curr_id = tracked.tracker_id[i] 
 
-            if curr_id not in detected:
-                detected[curr_id] = {"class_name": tracked.data["class_name"][i], "latitude": position[0], "longitude": position[1] ,"confidence": tracked.confidence[i]}
-
+            
+            detected[curr_id] = {"class_name": tracked.data["class_name"][i], "latitude": position[0], "longitude": position[1] ,"confidence": tracked.confidence[i]}
+          
+                
             tracker_id = curr_id
             class_name = tracked.data["class_name"][i]
             conf = tracked.confidence[i]
