@@ -51,10 +51,10 @@ class VideoProcessor():
             meta_data = json.load(f)
         return meta_data
     
-    def record_processed_video(self, input_path, db, job_id, fps = 30):
+    def record_processed_video(self, input_path, db, job_id, metadata_file_path, fps = 30):
         detected = {}
         output_path = f"{self.output_dir}/{job_id}.mp4"
-        metadata: dict = self.read_metadata("./resources/data/podaci.json")
+        metadata: dict = self.read_metadata(metadata_file_path)
         dynamic_metadata: list[dict] = metadata["dynamicMetadata"]
         last_position = (dynamic_metadata[0]["latitude"], dynamic_metadata[0]["longitude"])
 
@@ -103,7 +103,10 @@ class VideoProcessor():
         height, width, layers = annotated_frames[0].shape
 
         # Correct fourcc for MP4
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        
+        #fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+
+        fourcc = cv2.VideoWriter_fourcc(*'H264')
         video = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
         for img in annotated_frames:

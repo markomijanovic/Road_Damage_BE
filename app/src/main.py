@@ -61,7 +61,7 @@ def read_root():
 
 # --- Novi endpoint za UPLOAD ---
 @app.post("/upload-video/")
-def api_upload_video(background_tasks: BackgroundTasks, model: str = Form(...), video_file: UploadFile = File(...)):
+def api_upload_video(background_tasks: BackgroundTasks, model: str = Form(...), video_file: UploadFile = File(...), metadata: UploadFile = File(...)):
     job_id = uuid.uuid4()
     upload_dir = "../uploads"
     
@@ -69,15 +69,21 @@ def api_upload_video(background_tasks: BackgroundTasks, model: str = Form(...), 
     os.makedirs(upload_dir, exist_ok=True)
     
     temp_file_path = f"{upload_dir}/{job_id}_{video_file.filename}"
+    metadata_file_path = f"{upload_dir}/{job_id}_{metadata.filename}"
 
     with open(temp_file_path, "wb") as f:
         f.write(video_file.file.read())
+
+    with open(metadata_file_path, "wb") as f:
+        f.write(metadata.file.read())
 
     background_tasks.add_task(
         process_video_analysis, 
         temp_file_path, 
         job_id, 
-        model
+        model,
+        metadata_file_path,
+        
     )
 
     return {"message": "Video primljen, obrada počinje u pozadini."}
@@ -86,13 +92,13 @@ def api_upload_video(background_tasks: BackgroundTasks, model: str = Form(...), 
 
 
 # --- Ovo je tvoj spori, teški posao ---
-def process_video_analysis(video_path: str, job_id: UUID, model: str):
+def process_video_analysis(video_path: str, job_id: UUID, model: str, metadata_file_path: str):
     print(f"POZADINSKI POSAO: Počinjem obradu {video_path}")
 
     db = SessionLocal()
     processor = VideoProcessor(model_id=model_collection[model])
 
-    processor.record_processed_video(video_path, db, job_id)
+    processor.record_processed_video(video_path, db, job_id, metadata_file_path)
     
     print("Obrada završena.")
     
