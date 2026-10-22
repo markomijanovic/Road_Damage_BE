@@ -34,17 +34,44 @@ Python, FastAPI, SQLAlchemy, SQLite, OpenCV, Roboflow Inference, Supervision, By
 
 ## Running locally
 
-1. Create and activate a Python virtual environment.
-2. Install the required Python packages.
-3. Set the `ROBOFLOW_API_KEY` environment variable.
-4. Start the API:
+Python 3.12 is used in CI. Create a virtual environment, then:
 
 ```bash
+pip install -r requirements.txt
 uvicorn app.src.main:app --reload
 ```
 
-The interactive API documentation is available at `/docs` while the service is running.
+The CRUD API and `/docs` work without an inference model. For video processing:
 
-## Project status
+```bash
+pip install -r requirements-video.txt
+export ROBOFLOW_API_KEY=your_key
+uvicorn app.src.main:app --reload
+```
 
-This repository contains the hackathon prototype. Before production use, I would add complete dependency pinning, automated tests, upload validation, job-status tracking, cleanup of generated artifacts, and stricter CORS configuration.
+The optional inference dependencies use version ranges and are not a locked environment. A real model/video end-to-end run is still required on the target machine.
+
+`POST /upload-video/` accepts multipart `model`, `video_file`, and `metadata`. Supported model aliases are defined in `model_collection` in `app/src/main.py`. Metadata must have this shape:
+
+```json
+{"dynamicMetadata": [{"latitude": 44.0, "longitude": 20.0}]}
+```
+
+GPS samples are assumed to arrive at 30 samples per second; shorter metadata retains the last known position. This assumption needs timestamp-based alignment for a production pipeline.
+
+Uploads are streamed to generated filenames, limited to 100 MiB for video and 2 MiB for metadata, and removed after processing. A successful request returns HTTP 202 with a `job_id` for log correlation. Annotated videos are streamed to `app/output_videos/` at source FPS instead of accumulating all frames in RAM. Output videos currently require manual retention/cleanup.
+
+`GET /potholes/` supports validated `skip` and `limit` pagination. Set `CORS_ORIGINS` to a comma-separated list of frontend origins; defaults are localhost ports 3000 and 5173. Set `UPLOAD_DIR` to change temporary storage.
+
+## Automated checks
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+The API regression tests cover pagination, ORM serialization, unknown models, invalid metadata, empty/oversized uploads, generated filenames, background-failure cleanup, and short GPS streams. A video IO regression also checks frame count, source FPS, and short metadata using deterministic mocked inference. Tests do not download models or call Roboflow. GitHub Actions runs the same command on Python 3.12.
+
+## Scope and remaining work
+
+This remains an unauthenticated local hackathon prototype. Jobs run in-process: there is no durable queue, job-status endpoint, admission control, or restart recovery. A job ID is a correlation identifier, not a guarantee of successful processing. Real inference and codec compatibility have not been validated by the API tests. Further work includes end-to-end fixtures, durable job state, authentication, atomic batch persistence, and timestamp-based GPS alignment.

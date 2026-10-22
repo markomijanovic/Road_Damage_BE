@@ -1,0 +1,5 @@
+-r requirements.txt
+# Optional local video inference stack; verify with your Roboflow model.
+inference>=0.29.2,<2
+supervision>=0.25,<0.28
+opencv-python>=4.10,<5

@@ -3,10 +3,7 @@ import cv2
 import supervision as sv
 from inference import get_model
 from . import crud, schemas
-from dotenv import load_dotenv
 import os
-import json
-import uuid
 
 
 class VideoProcessor():
@@ -47,74 +44,48 @@ class VideoProcessor():
 
         return annotated_image
     
-    def read_metadata(self, path):
-        with open(path, "r") as f:
-            meta_data = json.load(f)
-        return meta_data
-    
-    def record_processed_video(self, input_path, db, job_id, metadata_file_path, fps = 30):
-        detected = {}
-        output_path = f"{self.output_dir}/{job_id}.mp4"
-        metadata: dict = self.read_metadata(metadata_file_path)
-        dynamic_metadata: list[dict] = metadata["dynamicMetadata"]
-        last_position = (dynamic_metadata[0]["latitude"], dynamic_metadata[0]["longitude"])
+    def record_processed_video(self, input_path, db, job_id, metadata_file_path, fps=30):
+        from pathlib import Path
+        import math
+        from .metadata import read_positions, position_at_frame
 
-        if input_path == "":
-            input_path = "../demovid.mp4"
-
+        positions = read_positions(metadata_file_path)
+        Path(self.output_dir).mkdir(parents=True, exist_ok=True)
+        output_path = str(Path(self.output_dir) / f"{job_id}.mp4")
         cap = cv2.VideoCapture(input_path)
-
-        framerate = cap.get(cv2.CAP_PROP_FPS)
-        update_pos_step = int(framerate/30)
-       
-        if update_pos_step == 0:
-            update_pos_step = 1
-
-        tracker = sv.ByteTrack()
-
-        if not cap.isOpened():
-            raise Exception("Cannot open input video")
-
-        annotated_frames = []
-        current_frame = 0
-        while True:
-            if current_frame % update_pos_step == 0:
-                ind = current_frame // update_pos_step
-                last_position = (dynamic_metadata[ind]["latitude"], dynamic_metadata[ind]["longitude"])
-            
-            success, frame = cap.read()
-            if not success:
-                break
-            
-
-            output_frame = self.process_frame(frame, tracker, detected, last_position)
-           
-            annotated_frames.append(output_frame)
-
-            current_frame += 1
-
-        cap.release()
-      
-        for k, v in detected.items():
-            crud.create_pothole(db=db, pothole=schemas.PotholeCreate(**v))
-
-        if len(annotated_frames) == 0:
-            raise Exception("No frames processed")
-
-        height, width, layers = annotated_frames[0].shape
-
-        # Correct fourcc for MP4
-        
-        #fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-
-        fourcc = cv2.VideoWriter_fourcc(*'H264')
-        video = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
-
-        for img in annotated_frames:
-            video.write(img)
-
-        video.release()
-        cv2.destroyAllWindows()
-
-        print("Saved:", output_path)
-
+        writer = None
+        completed = False
+        detected = {}
+        try:
+            if not cap.isOpened():
+                raise ValueError("Cannot open input video")
+            source_fps = cap.get(cv2.CAP_PROP_FPS)
+            if not math.isfinite(source_fps) or source_fps <= 0:
+                raise ValueError("Invalid video frame rate")
+            tracker = sv.ByteTrack()
+            frame_number = 0
+            while True:
+                success, frame = cap.read()
+                if not success:
+                    break
+                position = position_at_frame(positions, frame_number, source_fps)
+                annotated = self.process_frame(frame, tracker, detected, position)
+                if writer is None:
+                    height, width = annotated.shape[:2]
+                    writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"mp4v"), source_fps, (width, height))
+                    if not writer.isOpened():
+                        raise ValueError("Cannot create output video")
+                writer.write(annotated)
+                frame_number += 1
+            if not frame_number:
+                raise ValueError("No frames processed")
+            for detection in detected.values():
+                crud.create_pothole(db=db, pothole=schemas.PotholeCreate(**detection))
+            completed = True
+        finally:
+            cap.release()
+            if writer is not None:
+                writer.release()
+            if not completed:
+                Path(output_path).unlink(missing_ok=True)
+        return output_path
