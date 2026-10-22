@@ -1,17 +1,16 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from pydantic import BaseModel, ConfigDict
+import datetime
 
+# Osnovni model sa poljima koja primamo od klijenta
+class PotholeCreate(BaseModel):
+    class_name: str
+    latitude: float
+    longitude: float
+    confidence: float
 
-DATABASE_URL = "sqlite:///./pothole.db"
+# Model koji vraćamo klijentu (ima 'id' i 'detected_at' koje baza generiše)
+class Pothole(PotholeCreate):
+    id: int
+    detected_at: datetime.datetime
 
-#sql alchemy engine
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-
-# 3. Kreiramo SessionLocal klasu koja će se koristiti za svaku konekciju
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-#4. Osnovna klasa koju ce nasi modeli nasledjivati
-
-Base = declarative_base()
+    model_config = ConfigDict(from_attributes=True)
