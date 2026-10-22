@@ -4,8 +4,8 @@ from . import models, schemas
 
 # Funkcija za citanje svih rupa
 
-def get_potholes(db: Session):
-    return db.query(models.Pothole).all()
+def get_potholes(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Pothole).order_by(models.Pothole.id).offset(skip).limit(limit).all()
 
 # Funkcija za Kreiranje nove rupe
 def create_pothole(db: Session, pothole: schemas.PotholeCreate):
@@ -21,5 +21,6 @@ def create_pothole(db: Session, pothole: schemas.PotholeCreate):
     db.commit() # Sacuvaj u bazu
     db.refresh(db_pothole) # Osvezi objekata da dobije ID iz baze
     return db_pothole
+
 
 
