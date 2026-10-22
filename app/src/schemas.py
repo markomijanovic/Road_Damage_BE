@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 import datetime
 
 # Osnovni model sa poljima koja primamo od klijenta
@@ -13,5 +13,4 @@ class Pothole(PotholeCreate):
     id: int
     detected_at: datetime.datetime
 
-    class Config:
-        orm_mode = True # Ovo omogućava Pydantic-u da čita podatke iz SQLAlchemy objekata
+    model_config = ConfigDict(from_attributes=True)
