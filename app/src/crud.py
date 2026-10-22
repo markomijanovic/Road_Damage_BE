@@ -1,26 +1,17 @@
-from sqlalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 
-# Funkcija za citanje svih rupa
+DATABASE_URL = "sqlite:///./pothole.db"
 
-def get_potholes(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Pothole).order_by(models.Pothole.id).offset(skip).limit(limit).all()
+#sql alchemy engine
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
-# Funkcija za Kreiranje nove rupe
-def create_pothole(db: Session, pothole: schemas.PotholeCreate):
-    #Kreiramo SQLAlchemy model objekat od Pydantic podataka
-    db_pothole = models.Pothole(
-        class_name=pothole.class_name,
-        latitude=pothole.latitude,
-        longitude=pothole.longitude,
-        confidence=pothole.confidence
-    )
+# 3. Kreiramo SessionLocal klasu koja će se koristiti za svaku konekciju
 
-    db.add(db_pothole) # Dodaj u sesiju
-    db.commit() # Sacuvaj u bazu
-    db.refresh(db_pothole) # Osvezi objekata da dobije ID iz baze
-    return db_pothole
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+#4. Osnovna klasa koju ce nasi modeli nasledjivati
 
-
+Base = declarative_base()
