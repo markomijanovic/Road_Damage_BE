@@ -1,26 +1,20 @@
 # Road Damage Detection Backend
 
-I built this backend as part of a road-damage and pothole-detection prototype for the Rivian & Volkswagen Group Hackathon, where our team placed second. The goal was to turn video detections and GPS metadata into structured, geolocated road-damage records that the client application could consume.
+I built this backend as part of a road-damage and pothole-detection prototype for the automotive computer vision hackathon, where our team placed second. The goal was to turn video detections and GPS metadata into structured, geolocated road-damage records that the client application could consume.
 
-## Rivian video demo
+## Road video demos
 
-[![Rivian road-damage detection preview](demo/rivian-preview.gif)](demo/rivian-demo.mp4)
+All four videos are shown side by side below. Click a preview to open its full video, or [watch all four synchronized in one MP4](demo/overview/all-four.mp4).
 
-[Watch the 15-second MP4 comparison](demo/rivian-demo.mp4) · [Demo details](demo/README.md)
+| Input + model | Confidence 0.10 / 0.30 | Confidence 0.10 / 0.50 | IoU 0.30 / 0.70 |
+| --- | --- | --- | --- |
+| [![Input and model](demo/overview/original.gif)](demo/road-demo.mp4) | [![Confidence 0.10 vs 0.30](demo/overview/confidence30.gif)](demo/parameters/confidence-10-vs-30.mp4) | [![Confidence 0.10 vs 0.50](demo/overview/confidence50.gif)](demo/parameters/confidence-10-vs-50.mp4) | [![IoU 0.30 vs 0.70](demo/overview/iou.gif)](demo/parameters/iou-30-vs-70.mp4) |
 
-The left panel shows the input; the right panel shows actual model predictions and ByteTrack IDs from this backend. The original team model is **YOLOv8n `hakaton-dataset-f8j4s/1`**. This is a qualitative example, with visible false positives and missed detections; it is not an accuracy benchmark.
+The first video compares the input with actual model predictions and ByteTrack IDs. The other videos compare parameter settings on the same road footage. All clips last 15 seconds at 30 FPS. Animated previews show seconds 2–8 at 8 FPS; the combined MP4 synchronizes all four complete videos in one row, retaining their panel labels. Open it at full size to read the labels.
 
-### Parameter comparisons
+The original team model is **YOLOv8n `hakaton-dataset-f8j4s/1`**. These are qualitative examples, with possible false positives and missed detections, rather than an accuracy benchmark.
 
-The same 15-second excerpt is also available with synchronized parameter variants side by side:
-
-| Comparison | Video |
-| --- | --- |
-| Confidence 0.10 vs 0.30, IoU 0.50 | [Watch](demo/parameters/confidence-10-vs-30.mp4) |
-| Confidence 0.10 vs 0.50, IoU 0.50 | [Watch](demo/parameters/confidence-10-vs-50.mp4) |
-| IoU 0.30 vs 0.70, confidence 0.10 | [Watch](demo/parameters/iou-30-vs-70.mp4) |
-
-[Settings, counts and reproduction instructions](demo/parameters/README.md)
+[Demo details](demo/README.md) · [Parameter settings, counts and reproduction instructions](demo/parameters/README.md)
 
 ## My contribution
 
@@ -69,7 +63,7 @@ export ROBOFLOW_API_KEY=your_key
 uvicorn app.src.main:app --reload
 ```
 
-The optional inference dependencies use version ranges and are not a locked environment. The hosted backend has been exercised end to end on the Rivian clip linked above; local model execution still needs validation on the target machine.
+The optional inference dependencies use version ranges and are not a locked environment. The hosted backend has been exercised end to end on the road clip linked above; local model execution still needs validation on the target machine.
 
 `POST /upload-video/` accepts multipart `model`, `video_file`, and `metadata`. Supported model aliases are defined in `model_collection` in `app/src/main.py`. Metadata must have this shape:
 

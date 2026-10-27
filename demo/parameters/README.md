@@ -1,6 +1,6 @@
 # Side-by-side parameter comparisons
 
-These three videos use the same **02:10–02:25** excerpt from `11_13_25_154945_frontCenter_001.mp4`, the same original team YOLOv8n model (`hakaton-dataset-f8j4s/1`), and all **450 frames at 30 FPS**. Each video synchronizes two parameter variants side by side. The source is the same as the main Rivian demo.
+These three videos use the same **02:10–02:25** excerpt from the road-footage source, the same original team YOLOv8n model (`hakaton-dataset-f8j4s/1`), and all **450 frames at 30 FPS**. Each video synchronizes two parameter variants side by side. The source is the same as the main road demo.
 
 ## Confidence 0.10 vs 0.30
 
@@ -50,7 +50,7 @@ From the repository root, using the same 15-second source excerpt:
 pip install -r requirements-hosted.txt
 export ROBOFLOW_API_KEY=your_key
 python scripts/compare_parameters.py \
-  --video /path/to/rivian-demo-input.mp4 \
+  --video /path/to/road-demo-input.mp4 \
   --cache /path/to/private-comparison-cache \
   --output demo/parameters
 ```

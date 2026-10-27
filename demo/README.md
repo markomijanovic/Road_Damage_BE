@@ -1,14 +1,15 @@
-# Rivian road-damage demo
+# Road-damage demo
 
-[Watch the MP4 comparison](rivian-demo.mp4)
+[Watch all four videos synchronized side by side](overview/all-four.mp4). The repository README also shows four clickable animated previews in one row.
 
-![Actual model preview](rivian-preview.gif)
+[Watch the MP4 comparison](road-demo.mp4)
+
+![Actual model preview](road-preview.gif)
 
 This 15-second clip was processed through the real `POST /upload-video/` endpoint with `model=custom`, using **YOLOv8n `hakaton-dataset-f8j4s/1`**, the uploaded team model from November 15, 2025. Roboflow hosted inference supplies the predictions; this backend runs Supervision ByteTrack, box/label annotation, GPS association and SQLite persistence. No detections were manually drawn or synthesized.
 
 ## Source and settings
 
-- Local source: `RivianAutoVision2025/Rivian Dash Cam - Long Drive Session/9/11_13_25_154945_frontCenter_001.mp4`.
 - Excerpt: **02:10–02:25**, original 1376 × 976 at 30 FPS, 450 frames; no audio.
 - All source frames are processed. Model confidence threshold: **0.10**; IoU threshold: **0.50**, matching the existing application.
 - Original frontCenter GPS samples 3900–4349 are used locally under the backend's 30 Hz assumption. GPS coordinates and the database are not included in the demo files.

@@ -4,7 +4,7 @@
   "backend": "Roboflow hosted API",
   "confidence_threshold": 0.1,
   "iou_threshold": 0.5,
-  "source": "11_13_25_154945_frontCenter_001.mp4",
+  "source": "15-second forward-facing road-footage excerpt",
   "start_seconds": 130,
   "duration_seconds": 15,
   "elapsed_seconds": 174.04,
