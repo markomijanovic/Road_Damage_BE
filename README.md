@@ -4,13 +4,13 @@ I built this backend as part of a road-damage and pothole-detection prototype fo
 
 ## Road video demos
 
-All four videos are shown side by side below. Click a preview to open its full video, or [watch all four synchronized in one MP4](demo/overview/all-four.mp4).
+Three parameter comparisons, shown side by side. Click any preview to watch the full 15-second video.
 
-| Input + model | Confidence 0.10 / 0.30 | Confidence 0.10 / 0.50 | IoU 0.30 / 0.70 |
-| --- | --- | --- | --- |
-| [![Input and model](demo/overview/original.gif)](demo/road-demo.mp4) | [![Confidence 0.10 vs 0.30](demo/overview/confidence30.gif)](demo/parameters/confidence-10-vs-30.mp4) | [![Confidence 0.10 vs 0.50](demo/overview/confidence50.gif)](demo/parameters/confidence-10-vs-50.mp4) | [![IoU 0.30 vs 0.70](demo/overview/iou.gif)](demo/parameters/iou-30-vs-70.mp4) |
+| Confidence 0.10 / 0.30 | Confidence 0.10 / 0.50 | IoU 0.30 / 0.70 |
+| --- | --- | --- |
+| [![Confidence 0.10 vs 0.30](demo/overview/confidence30.gif)](demo/parameters/confidence-10-vs-30.mp4) | [![Confidence 0.10 vs 0.50](demo/overview/confidence50.gif)](demo/parameters/confidence-10-vs-50.mp4) | [![IoU 0.30 vs 0.70](demo/overview/iou.gif)](demo/parameters/iou-30-vs-70.mp4) |
 
-The first video compares the input with actual model predictions and ByteTrack IDs. The other videos compare parameter settings on the same road footage. All clips last 15 seconds at 30 FPS. Animated previews show seconds 2–8 at 8 FPS; the combined MP4 synchronizes all four complete videos in one row, retaining their panel labels. Open it at full size to read the labels.
+All three videos use the same frames and model. Each video compares two parameter settings; the animated previews show seconds 2–8. Open a video for full-size labels.
 
 The original team model is **YOLOv8n `hakaton-dataset-f8j4s/1`**. These are qualitative examples, with possible false positives and missed detections, rather than an accuracy benchmark.
 

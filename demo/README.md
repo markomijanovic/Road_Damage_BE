@@ -1,6 +1,6 @@
 # Road-damage demo
 
-[Watch all four videos synchronized side by side](overview/all-four.mp4). The repository README also shows four clickable animated previews in one row.
+The repository README shows [three parameter-comparison videos side by side](parameters/README.md), each with a clickable animated preview.
 
 [Watch the MP4 comparison](road-demo.mp4)
 
