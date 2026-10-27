@@ -6,7 +6,11 @@ import os
 
 
 class VideoProcessor():
-    def __init__(self, model_id):
+    def __init__(self, model_id, confidence=0.1, iou_threshold=0.5):
+        if not 0 <= confidence <= 1 or not 0 <= iou_threshold <= 1:
+            raise ValueError("Confidence and IoU thresholds must be between 0 and 1")
+        self.confidence = confidence
+        self.iou_threshold = iou_threshold
         self.output_dir = "./app/output_videos"
         if os.getenv("ROBOFLOW_INFERENCE_BACKEND", "local") == "hosted":
             from .hosted_inference import HostedModel
@@ -20,7 +24,7 @@ class VideoProcessor():
     def process_frame(self, frame, tracker, detected, position):
       
 
-        results = self.model.infer(frame, verbose=False, confidence=0.1, iou_threshold=0.5)[0]
+        results = self.model.infer(frame, verbose=False, confidence=self.confidence, iou_threshold=self.iou_threshold)[0]
        
         detections = sv.Detections.from_inference(results)
         tracked = tracker.update_with_detections(detections)

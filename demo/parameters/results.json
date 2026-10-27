@@ -1,0 +1,58 @@
+{
+  "model": "hakaton-dataset-f8j4s/1",
+  "input_sha256": "17a6e340d5d5f6509d0eb538e8bbf0e8d85dfffa9698752df1cc783be635fb50",
+  "frames": 450,
+  "fps": 30.0,
+  "duration_seconds": 15.0,
+  "inference": "Actual hosted API responses, separately queried for each IoU. Confidence filters replay the same post-NMS responses through VideoProcessor.process_frame.",
+  "tracking": "Independent default Supervision ByteTrack per variant. Tracker IDs are not matched across panels. No database or GPS persistence in this parameter comparison.",
+  "variants": {
+    "conf10": {
+      "confidence": 0.1,
+      "iou_threshold": 0.5,
+      "raw_prediction_instances": 428,
+      "unique_tracker_ids": 3,
+      "final_track_classes": {
+        "alligator cracking": 3
+      }
+    },
+    "conf30": {
+      "confidence": 0.3,
+      "iou_threshold": 0.5,
+      "raw_prediction_instances": 81,
+      "unique_tracker_ids": 4,
+      "final_track_classes": {
+        "alligator cracking": 2,
+        "pothole": 1,
+        "longitudinal cracking": 1
+      }
+    },
+    "conf50": {
+      "confidence": 0.5,
+      "iou_threshold": 0.5,
+      "raw_prediction_instances": 8,
+      "unique_tracker_ids": 0,
+      "final_track_classes": {}
+    },
+    "iou30": {
+      "confidence": 0.1,
+      "iou_threshold": 0.3,
+      "raw_prediction_instances": 390,
+      "unique_tracker_ids": 3,
+      "final_track_classes": {
+        "alligator cracking": 3
+      }
+    },
+    "iou70": {
+      "confidence": 0.1,
+      "iou_threshold": 0.7,
+      "raw_prediction_instances": 493,
+      "unique_tracker_ids": 3,
+      "final_track_classes": {
+        "alligator cracking": 3
+      }
+    }
+  },
+  "supervision_version": "0.27.0.post2",
+  "opencv_version": "4.12.0"
+}

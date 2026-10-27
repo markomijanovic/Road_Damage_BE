@@ -10,6 +10,18 @@ I built this backend as part of a road-damage and pothole-detection prototype fo
 
 The left panel shows the input; the right panel shows actual model predictions and ByteTrack IDs from this backend. The original team model is **YOLOv8n `hakaton-dataset-f8j4s/1`**. This is a qualitative example, with visible false positives and missed detections; it is not an accuracy benchmark.
 
+### Parameter comparisons
+
+The same 15-second excerpt is also available with synchronized parameter variants side by side:
+
+| Comparison | Video |
+| --- | --- |
+| Confidence 0.10 vs 0.30, IoU 0.50 | [Watch](demo/parameters/confidence-10-vs-30.mp4) |
+| Confidence 0.10 vs 0.50, IoU 0.50 | [Watch](demo/parameters/confidence-10-vs-50.mp4) |
+| IoU 0.30 vs 0.70, confidence 0.10 | [Watch](demo/parameters/iou-30-vs-70.mp4) |
+
+[Settings, counts and reproduction instructions](demo/parameters/README.md)
+
 ## My contribution
 
 I worked as the backend engineer on the prototype. My contribution included:
