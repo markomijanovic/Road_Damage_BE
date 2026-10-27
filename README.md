@@ -2,6 +2,14 @@
 
 I built this backend as part of a road-damage and pothole-detection prototype for the Rivian & Volkswagen Group Hackathon, where our team placed second. The goal was to turn video detections and GPS metadata into structured, geolocated road-damage records that the client application could consume.
 
+## Rivian video demo
+
+[![Rivian road-damage detection preview](demo/rivian-preview.gif)](demo/rivian-demo.mp4)
+
+[Watch the 15-second MP4 comparison](demo/rivian-demo.mp4) · [Demo details](demo/README.md)
+
+The left panel shows the input; the right panel shows actual model predictions and ByteTrack IDs from this backend. The original team model is **YOLOv8n `hakaton-dataset-f8j4s/1`**. This is a qualitative example, with visible false positives and missed detections; it is not an accuracy benchmark.
+
 ## My contribution
 
 I worked as the backend engineer on the prototype. My contribution included:
@@ -49,7 +57,7 @@ export ROBOFLOW_API_KEY=your_key
 uvicorn app.src.main:app --reload
 ```
 
-The optional inference dependencies use version ranges and are not a locked environment. A real model/video end-to-end run is still required on the target machine.
+The optional inference dependencies use version ranges and are not a locked environment. The hosted backend has been exercised end to end on the Rivian clip linked above; local model execution still needs validation on the target machine.
 
 `POST /upload-video/` accepts multipart `model`, `video_file`, and `metadata`. Supported model aliases are defined in `model_collection` in `app/src/main.py`. Metadata must have this shape:
 
@@ -75,3 +83,16 @@ The API regression tests cover pagination, ORM serialization, unknown models, in
 ## Scope and remaining work
 
 This remains an unauthenticated local hackathon prototype. Jobs run in-process: there is no durable queue, job-status endpoint, admission control, or restart recovery. A job ID is a correlation identifier, not a guarantee of successful processing. Real inference and codec compatibility have not been validated by the API tests. Further work includes end-to-end fixtures, durable job state, authentication, atomic batch persistence, and timestamp-based GPS alignment.
+
+## Hosted video inference
+
+When local inference dependencies are unavailable, the same video pipeline can use the Roboflow hosted API:
+
+```bash
+pip install -r requirements-hosted.txt
+export ROBOFLOW_API_KEY=your_key
+export ROBOFLOW_INFERENCE_BACKEND=hosted
+uvicorn app.src.main:app --reload
+```
+
+Upload the video and GPS metadata through `/docs` → `POST /upload-video/`, choosing `custom`. The API sends each frame to Roboflow; tracking, annotations, video output, GPS association, and database persistence run locally. Hosted requests consume the workspace's inference credits. The default backend remains local. Keep API keys in environment variables and out of Git.

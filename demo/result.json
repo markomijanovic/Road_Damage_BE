@@ -1,0 +1,26 @@
+{
+  "model": "hakaton-dataset-f8j4s/1",
+  "architecture": "YOLOv8n",
+  "backend": "Roboflow hosted API",
+  "confidence_threshold": 0.1,
+  "iou_threshold": 0.5,
+  "source": "11_13_25_154945_frontCenter_001.mp4",
+  "start_seconds": 130,
+  "duration_seconds": 15,
+  "elapsed_seconds": 174.04,
+  "frames": 450,
+  "fps": 30,
+  "unique_tracker_ids": 5,
+  "track_class_counts": {
+    "alligator cracking": 5
+  },
+  "source_resolution": [
+    1376,
+    976
+  ],
+  "presentation_resolution": [
+    1440,
+    640
+  ],
+  "validation": "Real POST /upload-video/ with model=custom; actual Roboflow predictions, ByteTrack, annotated video, SQLite persistence. No mocked inference."
+}

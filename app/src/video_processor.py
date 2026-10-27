@@ -1,7 +1,6 @@
 
 import cv2
 import supervision as sv
-from inference import get_model
 from . import crud, schemas
 import os
 
@@ -9,7 +8,12 @@ import os
 class VideoProcessor():
     def __init__(self, model_id):
         self.output_dir = "./app/output_videos"
-        self.model = get_model(model_id=model_id, api_key=os.environ["ROBOFLOW_API_KEY"])
+        if os.getenv("ROBOFLOW_INFERENCE_BACKEND", "local") == "hosted":
+            from .hosted_inference import HostedModel
+            self.model = HostedModel(model_id, os.environ["ROBOFLOW_API_KEY"])
+        else:
+            from inference import get_model
+            self.model = get_model(model_id=model_id, api_key=os.environ["ROBOFLOW_API_KEY"])
         
          
 

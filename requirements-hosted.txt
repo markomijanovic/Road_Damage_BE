@@ -1,0 +1,4 @@
+-r requirements.txt
+requests>=2.32,<3
+supervision>=0.25,<0.28
+opencv-python>=4.10,<5
